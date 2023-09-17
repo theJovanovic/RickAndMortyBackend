@@ -52,29 +52,35 @@ export class CharactersService {
         return character;
     }
 
-    public async fetchAndSaveCharacters() {
-        for (let index = 1; index <= 42; index++) {
-            const response = await axios.get(`https://rickandmortyapi.com/api/character?page=${index}`);
-            const apiCharacters = response.data.results;
-            await this.characters.save(apiCharacters);
-        }
-    }
-
     public async getByIds(ids: number[]): Promise<Character[]> {
         return await this.characters.findByIds(ids);
     }
 
-    public async updateEpisodeUrls(): Promise<void> {
-        // Fetch all characters from the database
-        const characters = await this.characters.find();
-
-        // Loop through each character and update the episode URLs
-        const updatedCharacters = characters.map(character => {
-            character.episode = character.episode.map(url => url.replace('https://rickandmortyapi.com/api', 'http://localhost:3000'));
-            return character;
-        });
-
-        // Save the updated characters back to the database
-        await this.characters.save(updatedCharacters);
+    public async addCharacter(character: Character) {
+        const newCharacter = this.characters.create(character)
+        return await this.characters.save(newCharacter)
     }
+
+    public async deleteCharacter(id: number) {
+        return await this.characters.delete(id)
+    }
+
+    // public async fetchAndSaveCharacters() {
+    //     for (let index = 1; index <= 42; index++) {
+    //         const response = await axios.get(`https://rickandmortyapi.com/api/character?page=${index}`);
+    //         const apiCharacters = response.data.results;
+    //         await this.characters.save(apiCharacters);
+    //     }
+    // }
+
+    // public async updateEpisodeUrls(): Promise<void> {
+    //     const characters = await this.characters.find();
+
+    //     const updatedCharacters = characters.map(character => {
+    //         character.episode = character.episode.map(url => url.replace('https://rickandmortyapi.com/api', 'http://localhost:3000'));
+    //         return character;
+    //     });
+
+    //     await this.characters.save(updatedCharacters);
+    // }
 }
