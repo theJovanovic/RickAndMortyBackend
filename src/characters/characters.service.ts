@@ -19,7 +19,10 @@ export class CharactersService {
 
         const [results, count] = await this.characters.findAndCount({
             skip: (page - 1) * limit,
-            take: limit
+            take: limit,
+            order: {
+                id: 'ASC'
+            }
         });
 
         const totalPages = Math.ceil(count / limit);
@@ -59,5 +62,19 @@ export class CharactersService {
 
     public async getByIds(ids: number[]): Promise<Character[]> {
         return await this.characters.findByIds(ids);
+    }
+
+    public async updateEpisodeUrls(): Promise<void> {
+        // Fetch all characters from the database
+        const characters = await this.characters.find();
+
+        // Loop through each character and update the episode URLs
+        const updatedCharacters = characters.map(character => {
+            character.episode = character.episode.map(url => url.replace('https://rickandmortyapi.com/api', 'http://localhost:3000'));
+            return character;
+        });
+
+        // Save the updated characters back to the database
+        await this.characters.save(updatedCharacters);
     }
 }

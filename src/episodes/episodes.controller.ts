@@ -11,11 +11,11 @@ export class EpisodesController {
         private readonly episodesService: EpisodesService,
     ) { }
 
-    @Get('/fetchAndSave')
-    async fetchAndSaveCharacters() {
-        await this.episodesService.fetchAndSaveCharacters();
-        return 'Data fetched and saved successfully';
-    }
+    // @Get('/fetchAndSave')
+    // async fetchAndSaveCharacters() {
+    //     await this.episodesService.fetchAndSaveCharacters();
+    //     return 'Data fetched and saved successfully';
+    // }
 
     @Get('/:ids')
     async getByIds(@Param('ids') ids: string): Promise<Episode[]> {

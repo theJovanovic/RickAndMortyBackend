@@ -10,11 +10,11 @@ export class LocationsController {
         private readonly locationsService: LocationsService,
     ) { }
 
-    @Get('/fetchAndSave')
-    async fetchAndSaveCharacters() {
-        await this.locationsService.fetchAndSaveCharacters();
-        return 'Data fetched and saved successfully';
-    }
+    // @Get('/fetchAndSave')
+    // async fetchAndSaveCharacters() {
+    //     await this.locationsService.fetchAndSaveCharacters();
+    //     return 'Data fetched and saved successfully';
+    // }
 
     @Get('/:ids')
     async getByIds(@Param('ids') ids: string): Promise<Location[]> {

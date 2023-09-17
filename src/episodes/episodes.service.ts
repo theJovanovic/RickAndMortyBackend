@@ -19,7 +19,7 @@ export class EpisodesService {
             skip: (page - 1) * 20,
             take: 20,
             order: {
-                episode: 'ASC' // Change 'episodeNumber' to the actual column name you want to sort by
+                id: 'ASC' // Change 'episodeNumber' to the actual column name you want to sort by
             }
         });
 

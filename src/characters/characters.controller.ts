@@ -10,11 +10,17 @@ export class CharactersController {
         private readonly charactersService: CharactersService,
     ) { }
 
-    @Get('/fetchAndSave')
-    async fetchAndSaveCharacters() {
-        await this.charactersService.fetchAndSaveCharacters();
-        return 'Data fetched and saved successfully';
-    }
+    // @Get('/fetchAndSave')
+    // async fetchAndSaveCharacters() {
+    //     await this.charactersService.fetchAndSaveCharacters();
+    //     return 'Data fetched and saved successfully';
+    // }
+
+    // @Get('/updateUrls')
+    // async updateUrls() {
+    //     await this.charactersService.updateEpisodeUrls();
+    //     return 'Data updated successfully';
+    // }
 
     @Get('/:ids')
     async getByIds(@Param('ids') ids: string): Promise<Character[]> {
