@@ -17,6 +17,12 @@ export class EpisodesController {
         return 'Data fetched and saved successfully';
     }
 
+    @Get('/:ids')
+    async getByIds(@Param('ids') ids: string): Promise<Episode[]> {
+        const idArray = ids.split(',').map(id => Number(id));
+        return this.episodesService.getByIds(idArray);
+    }
+
     @Get(':id')
     async getEpisodeById(@Param('id') id: number) {
         return await this.episodesService.getById(id);

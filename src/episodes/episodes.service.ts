@@ -17,7 +17,10 @@ export class EpisodesService {
 
         const [results, count] = await this.episodes.findAndCount({
             skip: (page - 1) * 20,
-            take: 20
+            take: 20,
+            order: {
+                episode: 'ASC' // Change 'episodeNumber' to the actual column name you want to sort by
+            }
         });
 
         const totalPages = Math.ceil(count / 20);
@@ -52,6 +55,10 @@ export class EpisodesService {
             const apiCharacters = response.data.results;
             await this.episodes.save(apiCharacters);
         }
+    }
+
+    public async getByIds(ids: number[]): Promise<Episode[]> {
+        return await this.episodes.findByIds(ids);
     }
 
 }

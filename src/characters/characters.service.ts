@@ -56,4 +56,8 @@ export class CharactersService {
             await this.characters.save(apiCharacters);
         }
     }
+
+    public async getByIds(ids: number[]): Promise<Character[]> {
+        return await this.characters.findByIds(ids);
+    }
 }

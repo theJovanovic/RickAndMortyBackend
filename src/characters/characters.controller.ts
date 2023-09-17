@@ -1,6 +1,7 @@
 import { Controller, Get, Param, ParseIntPipe, Query } from '@nestjs/common';
 import { CharactersService } from './characters.service';
 import axios, { AxiosResponse } from 'axios';
+import { Character } from 'src/db_models/Character';
 
 @Controller('character')
 export class CharactersController {
@@ -13,6 +14,12 @@ export class CharactersController {
     async fetchAndSaveCharacters() {
         await this.charactersService.fetchAndSaveCharacters();
         return 'Data fetched and saved successfully';
+    }
+
+    @Get('/:ids')
+    async getByIds(@Param('ids') ids: string): Promise<Character[]> {
+        const idArray = ids.split(',').map(id => Number(id));
+        return this.charactersService.getByIds(idArray);
     }
 
     @Get('/:id')

@@ -53,4 +53,8 @@ export class LocationsService {
             await this.locations.save(apiCharacters);
         }
     }
+
+    public async getByIds(ids: number[]): Promise<Location[]> {
+        return await this.locations.findByIds(ids);
+    }
 }
