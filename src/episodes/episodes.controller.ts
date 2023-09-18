@@ -1,6 +1,6 @@
 import { Controller, Get, Post, Body, Param, ParseIntPipe, Query } from '@nestjs/common';
 import { EpisodesService } from './episodes.service';
-import { ApiResponse } from 'src/models/ApiResponse';
+import { ApiResponse } from 'src/models/api_response';
 import { Episode } from 'src/db_models/Episode';
 import axios, { AxiosResponse } from 'axios';
 
@@ -15,6 +15,12 @@ export class EpisodesController {
     // async fetchAndSaveCharacters() {
     //     await this.episodesService.fetchAndSaveCharacters();
     //     return 'Data fetched and saved successfully';
+    // }
+
+    // @Get('/updateUrls')
+    // async updateUrls() {
+    //     await this.episodesService.updateEpisodeUrls();
+    //     return 'Data updated successfully';
     // }
 
     @Get('/:ids')

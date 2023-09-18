@@ -16,6 +16,12 @@ export class LocationsController {
     //     return 'Data fetched and saved successfully';
     // }
 
+    // @Get('/updateUrls')
+    // async updateUrls() {
+    //     await this.locationsService.updateEpisodeUrls();
+    //     return 'Data updated successfully';
+    // }
+
     @Get('/:ids')
     async getByIds(@Param('ids') ids: string): Promise<Location[]> {
         const idArray = ids.split(',').map(id => Number(id));

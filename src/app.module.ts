@@ -13,6 +13,9 @@ import { Location } from './db_models/Location';
 import { User } from './db_models/User';
 import { LocationsController } from './locations/locations.controller';
 import { LocationsService } from './locations/locations.service';
+import { UsersModule } from './users/users.module';
+import { JwtModule } from '@nestjs/jwt';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
@@ -22,18 +25,21 @@ import { LocationsService } from './locations/locations.service';
       Character,
       Episode,
       Location
-    ])],
+    ]),
+    UsersModule,
+    AuthModule
+  ],
   controllers: [
     AppController,
     CharactersController,
     EpisodesController,
-    LocationsController
+    LocationsController,
   ],
   providers: [
     AppService,
     CharactersService,
     EpisodesService,
-    LocationsService
+    LocationsService,
   ],
 })
 export class AppModule { }

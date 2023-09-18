@@ -57,4 +57,16 @@ export class LocationsService {
     public async getByIds(ids: number[]): Promise<Location[]> {
         return await this.locations.findByIds(ids);
     }
+
+    // public async updateEpisodeUrls(): Promise<void> {
+    //     const locations = await this.locations.find();
+
+    //     const updatedCharacters = locations.map(episode => {
+    //         // episode.residents = episode.residents.map(url => url.replace('https://rickandmortyapi.com/api', 'http://localhost:3000'));
+    //         episode.url = episode.url.replace('https://rickandmortyapi.com/api', 'http://localhost:3000');
+    //         return episode;
+    //     });
+
+    //     await this.locations.save(updatedCharacters);
+    // }
 }

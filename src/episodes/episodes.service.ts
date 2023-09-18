@@ -49,16 +49,28 @@ export class EpisodesService {
         return episode;
     }
 
-    public async fetchAndSaveCharacters() {
-        for (let index = 1; index <= 3; index++) {
-            const response = await axios.get(`https://rickandmortyapi.com/api/episode?page=${index}`);
-            const apiCharacters = response.data.results;
-            await this.episodes.save(apiCharacters);
-        }
-    }
-
     public async getByIds(ids: number[]): Promise<Episode[]> {
         return await this.episodes.findByIds(ids);
     }
+
+    // public async fetchAndSaveCharacters() {
+    //     for (let index = 1; index <= 3; index++) {
+    //         const response = await axios.get(`https://rickandmortyapi.com/api/episode?page=${index}`);
+    //         const apiCharacters = response.data.results;
+    //         await this.episodes.save(apiCharacters);
+    //     }
+    // }
+
+    // public async updateEpisodeUrls(): Promise<void> {
+    //     const episodes = await this.episodes.find();
+
+    //     const updatedCharacters = episodes.map(episode => {
+    //         // episode.characters = episode.characters.map(url => url.replace('https://rickandmortyapi.com/api', 'http://localhost:3000'));
+    //         episode.url = episode.url.replace('https://rickandmortyapi.com/api', 'http://localhost:3000');
+    //         return episode;
+    //     });
+
+    //     await this.episodes.save(updatedCharacters);
+    // }
 
 }

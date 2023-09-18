@@ -1,7 +1,8 @@
-import { Controller, Get, Param, ParseIntPipe, Query, Post, Delete, Body } from '@nestjs/common';
+import { Controller, Get, Param, ParseIntPipe, Query, Post, Delete, Body, UseGuards } from '@nestjs/common';
 import { CharactersService } from './characters.service';
 import axios, { AxiosResponse } from 'axios';
 import { Character } from 'src/db_models/Character';
+import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 
 @Controller('character')
 export class CharactersController {
@@ -21,6 +22,7 @@ export class CharactersController {
     //     await this.charactersService.updateEpisodeUrls();
     //     return 'Data updated successfully';
     // }
+
 
     @Post('add')
     public async addCharacter(@Body() character: Character) {

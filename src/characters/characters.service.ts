@@ -2,7 +2,7 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { Repository, getRepository } from "typeorm"
 import { InjectRepository } from "@nestjs/typeorm"
 import { Character } from 'src/db_models/Character';
-import { ApiResponse } from 'src/models/ApiResponse';
+import { ApiResponse } from 'src/models/api_response';
 import axios, { AxiosResponse } from 'axios';
 import { Episode } from 'src/db_models/Episode';
 
@@ -77,7 +77,10 @@ export class CharactersService {
     //     const characters = await this.characters.find();
 
     //     const updatedCharacters = characters.map(character => {
-    //         character.episode = character.episode.map(url => url.replace('https://rickandmortyapi.com/api', 'http://localhost:3000'));
+    //         // character.episode = character.episode.map(url => url.replace('https://rickandmortyapi.com/api', 'http://localhost:3000'));
+    //         // character.url = character.url.replace('https://rickandmortyapi.com/api', 'http://localhost:3000');
+    //         character.origin.url = character.origin.url.replace('https://rickandmortyapi.com/api', 'http://localhost:3000');
+    //         character.location.url = character.location.url.replace('https://rickandmortyapi.com/api', 'http://localhost:3000');
     //         return character;
     //     });
 

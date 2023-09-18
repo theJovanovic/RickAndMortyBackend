@@ -4,6 +4,7 @@ import {
   Column,
   Unique
 } from 'typeorm';
+import * as bcrypt from "bcrypt"
 
 @Entity('user')
 @Unique(['email'])
@@ -12,12 +13,12 @@ export class User {
   id: number;
 
   @Column({ type: 'varchar', length: 255 })
-  firstName: string;
+  firstname: string;
 
   @Column({ type: 'varchar', length: 255 })
-  lastName: string;
+  lastname: string;
 
-  @Column({ type: 'varchar', length: 255 }) 
+  @Column({ type: 'varchar', length: 255 })
   email: string;
 
   @Column({ type: 'varchar', length: 255 })
@@ -25,4 +26,8 @@ export class User {
 
   @Column({ type: 'boolean', default: false })
   isActive: boolean;
+
+  async validatePassword(password: string): Promise<boolean> {
+    return bcrypt.compare(password, this.password);
+  }
 }
