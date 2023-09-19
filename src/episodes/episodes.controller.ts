@@ -1,8 +1,9 @@
-import { Controller, Get, Post, Body, Param, ParseIntPipe, Query } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, ParseIntPipe, Query, UseGuards } from '@nestjs/common';
 import { EpisodesService } from './episodes.service';
 import { ApiResponse } from 'src/models/api_response';
 import { Episode } from 'src/db_models/Episode';
 import axios, { AxiosResponse } from 'axios';
+import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 
 @Controller('episode')
 export class EpisodesController {
@@ -23,17 +24,20 @@ export class EpisodesController {
     //     return 'Data updated successfully';
     // }
 
+    @UseGuards(JwtAuthGuard)
     @Get('/:ids')
     async getByIds(@Param('ids') ids: string): Promise<Episode[]> {
         const idArray = ids.split(',').map(id => Number(id));
         return this.episodesService.getByIds(idArray);
     }
 
-    @Get(':id')
-    async getEpisodeById(@Param('id') id: number) {
+    @UseGuards(JwtAuthGuard)
+    @Get('/:id')
+    async getEpisodeById(@Param('id', ParseIntPipe) id: number) {
         return await this.episodesService.getById(id);
     }
 
+    @UseGuards(JwtAuthGuard)
     @Get()
     async getAllEpisodes(@Query('page') page: number) {
         return await this.episodesService.getAll(page);

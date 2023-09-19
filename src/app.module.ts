@@ -16,6 +16,7 @@ import { LocationsService } from './locations/locations.service';
 import { UsersModule } from './users/users.module';
 import { JwtModule } from '@nestjs/jwt';
 import { AuthModule } from './auth/auth.module';
+import { JwtAuthGuard } from './auth/jwt-auth.guard';
 
 @Module({
   imports: [
@@ -27,7 +28,8 @@ import { AuthModule } from './auth/auth.module';
       Location
     ]),
     UsersModule,
-    AuthModule
+    AuthModule,
+    JwtModule
   ],
   controllers: [
     AppController,

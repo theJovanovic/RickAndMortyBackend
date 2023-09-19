@@ -18,6 +18,10 @@ export class UsersService {
         private readonly jwtService: JwtService,
     ) { }
 
+    async updateUser(updatedUser: User) {
+        await this.users.update(updatedUser.id, updatedUser)
+    }
+
     async createUser(createUserDTO: CreateUserDTO) {
         const existingUser = await this.users.findOne({ where: { email: createUserDTO.email } });
         if (!existingUser) {
@@ -32,10 +36,13 @@ export class UsersService {
             const payload = { sub: user.id, email: user.email };
             const accessToken = await this.jwtService.signAsync(payload);
 
-            return { token: accessToken }
+            user.isActive = true
+            this.updateUser(user)
+
+            return { id: user.id, firstname: user.firstname, lastname: user.lastname, email: user.email, token: accessToken }
         }
 
-        return { token: null }
+        return { id: null, firstname: null, lastname: null, email: null, token: null }
 
     }
 
@@ -49,6 +56,12 @@ export class UsersService {
 
     async findByEmail(email: string): Promise<User> {
         return this.users.findOne({ where: { email } });
+    }
+
+    async logout(id: number) {
+        const user = await this.users.findOne({ where: { id: id } });
+        user.isActive = false
+        await this.updateUser(user)
     }
 
 }
