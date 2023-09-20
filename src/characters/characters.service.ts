@@ -1,10 +1,11 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { Repository, getRepository } from "typeorm"
+import { Like, Repository, getRepository } from "typeorm"
 import { InjectRepository } from "@nestjs/typeorm"
 import { Character } from 'src/db_models/Character';
 import { ApiResponse } from 'src/models/api_response';
 import axios, { AxiosResponse } from 'axios';
 import { Episode } from 'src/db_models/Episode';
+import { CharacterFilter } from 'src/models/character.filter.dto';
 
 @Injectable()
 export class CharactersService {
@@ -14,10 +15,35 @@ export class CharactersService {
         private readonly characters: Repository<Character>,
     ) { }
 
-    public async getAll(page: number = 1, limit: number = 20): Promise<any> {
+    public async getAll(page: number = 1, filters: CharacterFilter, limit: number = 20): Promise<any> {
         page = Number(page);
 
+        const whereConditions: any = {};
+        let filterQuery = ""
+
+        if (filters.name) {
+            whereConditions['name'] = Like(`%${filters.name}%`);
+            filterQuery = filterQuery.concat(`&name=${filters.name}`)
+        }
+
+        if (filters.status) {
+            whereConditions['status'] = filters.status;
+            filterQuery = filterQuery.concat(`&status=${filters.status}`)
+        }
+
+        if (filters.species) {
+            whereConditions['species'] = filters.species;
+            filterQuery = filterQuery.concat(`&species=${filters.species}`)
+        }
+
+        if (filters.gender) {
+            whereConditions['gender'] = filters.gender;
+            filterQuery = filterQuery.concat(`&gender=${filters.gender}`)
+        }
+
+
         const [results, count] = await this.characters.findAndCount({
+            where: whereConditions,
             skip: (page - 1) * limit,
             take: limit,
             order: {
@@ -29,8 +55,8 @@ export class CharactersService {
         const hasNextPage = page < totalPages;
         const hasPrevPage = page > 1;
 
-        const next = hasNextPage ? `http://localhost:3000/characters?page=${page + 1}` : null;
-        const prev = hasPrevPage ? `http://localhost:3000/characters?page=${page - 1}` : null;
+        const next = hasNextPage ? `http://localhost:3000/characters?page=${page + 1}${filterQuery}` : null;
+        const prev = hasPrevPage ? `http://localhost:3000/characters?page=${page - 1}${filterQuery}` : null;
 
         return {
             info: {

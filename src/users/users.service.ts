@@ -63,5 +63,6 @@ export class UsersService {
         user.isActive = false
         await this.updateUser(user)
     }
+    
 
 }

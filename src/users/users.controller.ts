@@ -1,4 +1,4 @@
-import { Controller, Post, Body, Get, Param, ParseIntPipe, UseGuards } from '@nestjs/common';
+import { Controller, Post, Body, Get, Param, ParseIntPipe, UseGuards, Put } from '@nestjs/common';
 import { User } from 'src/db_models/User';
 import { UsersService } from './users.service';
 import { CreateUserDTO } from 'src/models/create-user.dto';
@@ -22,7 +22,7 @@ export class UsersController {
     }
 
     @UseGuards(JwtAuthGuard)
-    @Post('/logout/:id')
+    @Get('/logout/:id')
     async logout(@Param('id', ParseIntPipe) id: number) {
         this.usersService.logout(id)
     }

@@ -3,6 +3,8 @@ import { CharactersService } from './characters.service';
 import axios, { AxiosResponse } from 'axios';
 import { Character } from 'src/db_models/Character';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
+import { CharacterFilter } from 'src/models/character.filter.dto';
+import { log } from 'console';
 
 @Controller('character')
 export class CharactersController {
@@ -48,10 +50,26 @@ export class CharactersController {
         return this.charactersService.deleteCharacter(id)
     }
 
+    // @UseGuards(JwtAuthGuard)
+    // @Get()
+    // async getAllCharacters(@Query('page') page: number) {
+    //     return await this.charactersService.getAll(page);
+    // }
+
     @UseGuards(JwtAuthGuard)
     @Get()
-    async getAllCharacters(@Query('page') page: number) {
-        return await this.charactersService.getAll(page);
+    async getAllCharacters(
+        @Query('page') page: number,
+        @Query('name') name?: string,
+        @Query('status') status?: string,
+        @Query('species') species?: string,
+        @Query('gender') gender?: string) {
+        const characterFilter = {
+            name,
+            status,
+            species,
+            gender
+        } as CharacterFilter
+        return await this.charactersService.getAll(page, characterFilter);
     }
-
 }
