@@ -27,4 +27,16 @@ export class Episode {
 
   @CreateDateColumn()
   created: Date;
+
+  @Column({ default: 0 })
+  likes: number;
+
+  @Column('int', { array: true, nullable: true })
+  like_users_id: number[]
+
+  @Column({ default: 0 })
+  dislikes: number;
+  
+  @Column('int', { array: true, nullable: true })
+  dislike_users_id: number[]
 }

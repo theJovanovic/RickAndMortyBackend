@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Param, ParseIntPipe, Query, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, ParseIntPipe, Query, UseGuards, Put } from '@nestjs/common';
 import { EpisodesService } from './episodes.service';
 import { ApiResponse } from 'src/models/api_response';
 import { Episode } from 'src/db_models/Episode';
@@ -24,24 +24,34 @@ export class EpisodesController {
     //     return 'Data updated successfully';
     // }
 
-    @UseGuards(JwtAuthGuard)
+    @Put('/dislike/:id/user/:user_id')
+    async dislikeEpisode(@Param('id', ParseIntPipe) id: number, @Param('user_id', ParseIntPipe) user_id: number) {
+        return await this.episodesService.incrementDislikes(id, user_id);
+    }
+
+    @Put('/like/:id/user/:user_id')
+    async likeEpisode(@Param('id', ParseIntPipe) id: number, @Param('user_id', ParseIntPipe) user_id: number) {
+        return await this.episodesService.incrementLikes(id, user_id);
+    }
+
+    // @UseGuards(JwtAuthGuard)
     @Get('/:ids')
     async getByIds(@Param('ids') ids: string): Promise<Episode[]> {
         const idArray = ids.split(',').map(id => Number(id));
         return this.episodesService.getByIds(idArray);
     }
 
-    @UseGuards(JwtAuthGuard)
+    // @UseGuards(JwtAuthGuard)
     @Get('/:id')
     async getEpisodeById(@Param('id', ParseIntPipe) id: number) {
         return await this.episodesService.getById(id);
     }
 
-    @UseGuards(JwtAuthGuard)
+    // @UseGuards(JwtAuthGuard)
     @Get()
     async getAllEpisodes(@Query('page') page: number) {
         return await this.episodesService.getAll(page);
     }
 
-    
+
 }

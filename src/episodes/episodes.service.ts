@@ -12,18 +12,18 @@ export class EpisodesService {
         private readonly episodes: Repository<Episode>,
     ) { }
 
-    public async getAll(page: number = 1): Promise<any> {
+    public async getAll(page: number = 1, limit: number = 20) {
         page = Number(page);
 
         const [results, count] = await this.episodes.findAndCount({
-            skip: (page - 1) * 20,
-            take: 20,
+            skip: (page - 1) * limit,
+            take: limit,
             order: {
                 id: 'ASC' // Change 'episodeNumber' to the actual column name you want to sort by
             }
         });
 
-        const totalPages = Math.ceil(count / 20);
+        const totalPages = Math.ceil(count / limit);
         const hasNextPage = page < totalPages;
         const hasPrevPage = page > 1;
 
@@ -41,7 +41,7 @@ export class EpisodesService {
         };
     }
 
-    public async getById(id: number): Promise<Episode> {
+    public async getById(id: number) {
         const episode = await this.episodes.findOne({ where: { id: id } });
         if (!episode) {
             throw new NotFoundException(`Episode with id ${id} not found`);
@@ -49,8 +49,44 @@ export class EpisodesService {
         return episode;
     }
 
-    public async getByIds(ids: number[]): Promise<Episode[]> {
+    public async getByIds(ids: number[]) {
         return await this.episodes.findByIds(ids);
+    }
+
+    async incrementLikes(id: number, user_id: number): Promise<Episode> {
+        const episode = await this.episodes.findOne({ where: { id: id } });
+        if (!episode) {
+            throw new Error('Episode not found');
+        }
+        if (!episode.like_users_id) {
+            episode.like_users_id = [];
+        }
+        if (episode.like_users_id.includes(user_id)) {
+            episode.likes--
+            episode.like_users_id = episode.like_users_id.filter(id => id !== user_id)
+            return this.episodes.save(episode);
+        }
+        episode.likes++;
+        episode.like_users_id.push(user_id)
+        return this.episodes.save(episode);
+    }
+
+    async incrementDislikes(id: number, user_id: number): Promise<Episode> {
+        const episode = await this.episodes.findOne({ where: { id: id } });
+        if (!episode) {
+            throw new Error('Episode not found');
+        }
+        if (!episode.dislike_users_id) {
+            episode.dislike_users_id = [];
+        }
+        if (episode.dislike_users_id.includes(user_id)) {
+            episode.dislikes--
+            episode.dislike_users_id = episode.dislike_users_id.filter(id => id !== user_id)
+            return this.episodes.save(episode);
+        }
+        episode.dislikes++;
+        episode.dislike_users_id.push(user_id)
+        return this.episodes.save(episode);
     }
 
     // public async fetchAndSaveCharacters() {

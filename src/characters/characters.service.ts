@@ -15,7 +15,7 @@ export class CharactersService {
         private readonly characters: Repository<Character>,
     ) { }
 
-    public async getAll(page: number = 1, filters: CharacterFilter, limit: number = 20): Promise<any> {
+    public async getAll(page: number = 1, filters: CharacterFilter, limit: number = 15) {
         page = Number(page);
 
         const whereConditions: any = {};
@@ -70,7 +70,7 @@ export class CharactersService {
     }
 
 
-    public async getById(id: number): Promise<Character> {
+    public async getById(id: number) {
         const character = await this.characters.findOne({ where: { id: id } });
         if (!character) {
             throw new NotFoundException(`Character with id ${id} not found`);
@@ -78,7 +78,7 @@ export class CharactersService {
         return character;
     }
 
-    public async getByIds(ids: number[]): Promise<Character[]> {
+    public async getByIds(ids: number[]) {
         return await this.characters.findByIds(ids);
     }
 

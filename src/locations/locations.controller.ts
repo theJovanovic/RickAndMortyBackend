@@ -23,20 +23,20 @@ export class LocationsController {
     //     return 'Data updated successfully';
     // }
     
-    @UseGuards(JwtAuthGuard)
+    // @UseGuards(JwtAuthGuard)
     @Get('/:ids')
     async getByIds(@Param('ids') ids: string): Promise<Location[]> {
         const idArray = ids.split(',').map(id => Number(id));
         return this.locationsService.getByIds(idArray);
     }
 
-    @UseGuards(JwtAuthGuard)
+    // @UseGuards(JwtAuthGuard)
     @Get('/:id')
     async getLocationById(@Param('id', ParseIntPipe) id: number) {
         return await this.locationsService.getById(id);
     }
 
-    @UseGuards(JwtAuthGuard)
+    // @UseGuards(JwtAuthGuard)
     @Get()
     async getAllLocations(@Query('page') page: number) {
         return await this.locationsService.getAll(page);

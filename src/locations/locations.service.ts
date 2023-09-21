@@ -12,15 +12,15 @@ export class LocationsService {
         private readonly locations: Repository<Location>,
     ) { }
 
-    public async getAll(page: number = 1): Promise<any> {
+    public async getAll(page: number = 1, limit: number = 20) {
         page = Number(page);
 
         const [results, count] = await this.locations.findAndCount({
-            skip: (page - 1) * 20,
-            take: 20
+            skip: (page - 1) * limit,
+            take: limit
         });
 
-        const totalPages = Math.ceil(count / 20);
+        const totalPages = Math.ceil(count / limit);
         const hasNextPage = page < totalPages;
         const hasPrevPage = page > 1;
 
@@ -38,7 +38,7 @@ export class LocationsService {
         };
     }
 
-    public async getById(id: number): Promise<Location> {
+    public async getById(id: number) {
         const location = await this.locations.findOne({ where: { id: id } });
         if (!location) {
             throw new NotFoundException(`Location with id ${id} not found`);
@@ -54,7 +54,7 @@ export class LocationsService {
         }
     }
 
-    public async getByIds(ids: number[]): Promise<Location[]> {
+    public async getByIds(ids: number[]) {
         return await this.locations.findByIds(ids);
     }
 
