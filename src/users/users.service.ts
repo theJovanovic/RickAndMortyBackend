@@ -2,10 +2,8 @@ import { Injectable } from '@nestjs/common';
 import { CreateUserDTO } from 'src/models/create-user.dto';
 import { NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm'
-import { Location } from 'src/db_models/Location';
 import { Repository } from 'typeorm';
 import { User } from 'src/db_models/User';
-import { create } from 'domain';
 import * as bcrypt from "bcrypt"
 import { JwtService } from '@nestjs/jwt';
 
@@ -63,6 +61,13 @@ export class UsersService {
         user.isActive = false
         await this.updateUser(user)
     }
-    
+
+    async getUserById(id: number) {
+        const user = await this.users.findOne({ where: { id: id } });
+        if (!user) {
+            throw new NotFoundException(`Location with id ${id} not found`);
+        }
+        return user
+    }
 
 }

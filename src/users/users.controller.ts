@@ -1,5 +1,4 @@
 import { Controller, Post, Body, Get, Param, ParseIntPipe, UseGuards, Put } from '@nestjs/common';
-import { User } from 'src/db_models/User';
 import { UsersService } from './users.service';
 import { CreateUserDTO } from 'src/models/create-user.dto';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
@@ -16,9 +15,9 @@ export class UsersController {
         return this.usersService.createUser(createUserDTO)
     }
 
-    @Get()
-    async getUsers() {
-        return this.usersService.getUsers()
+    @Get('/:id')
+    async getUserById(@Param('id', ParseIntPipe) id: number) {
+        return this.usersService.getUserById(id)
     }
 
     @UseGuards(JwtAuthGuard)
@@ -26,4 +25,10 @@ export class UsersController {
     async logout(@Param('id', ParseIntPipe) id: number) {
         this.usersService.logout(id)
     }
+
+    @Get()
+    async getUsers() {
+        return this.usersService.getUsers()
+    }
+
 }

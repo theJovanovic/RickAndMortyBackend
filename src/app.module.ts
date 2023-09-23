@@ -17,19 +17,23 @@ import { UsersModule } from './users/users.module';
 import { JwtModule } from '@nestjs/jwt';
 import { AuthModule } from './auth/auth.module';
 import { JwtAuthGuard } from './auth/jwt-auth.guard';
+import { Suggestion } from './db_models/Suggestion';
+import { SuggestionsModule } from './suggestions/suggestions.module';
 
 @Module({
   imports: [
     TypeOrmModule.forRoot(typeormConfig),
     TypeOrmModule.forFeature([
+      Suggestion,
       User,
       Character,
       Episode,
-      Location
+      Location,
     ]),
     UsersModule,
     AuthModule,
-    JwtModule
+    JwtModule,
+    SuggestionsModule
   ],
   controllers: [
     AppController,
