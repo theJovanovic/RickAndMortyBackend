@@ -21,4 +21,10 @@ export class Suggestion {
 
     @Column()
     plot: string;
+
+    @Column({ default: 0 })
+    approvals: number;
+
+    @Column('int', { array: true, nullable: true })
+    approve_users_id: number[]
 }

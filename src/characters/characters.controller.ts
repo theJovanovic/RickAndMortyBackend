@@ -3,7 +3,7 @@ import { CharactersService } from './characters.service';
 import axios, { AxiosResponse } from 'axios';
 import { Character } from 'src/db_models/Character';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
-import { CharacterFilter } from 'src/models/character.filter.dto';
+import { CharacterFilter } from 'src/models/filter-character.dto';
 import { log } from 'console';
 
 @Controller('character')

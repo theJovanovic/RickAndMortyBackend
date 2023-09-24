@@ -70,4 +70,9 @@ export class UsersService {
         return user
     }
 
+    async userCount() {
+        const users = await this.users.find();
+        return users.length
+    }
+
 }

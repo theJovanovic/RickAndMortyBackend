@@ -1,7 +1,6 @@
-import { Controller, Post, Body, Get } from '@nestjs/common';
+import { Controller, Param, Post, Body, Get, Put, ParseIntPipe } from '@nestjs/common';
 import { SuggestionsService } from './suggestions.service';
 import { CreateSuggestionDTO } from 'src/models/create-suggestion.dto';
-import { Suggestion } from 'src/db_models/Suggestion';
 
 @Controller('suggestion')
 export class SuggestionsController {
@@ -11,7 +10,7 @@ export class SuggestionsController {
     ) { }
 
     @Get()
-    async getAllSuggestions(): Promise<Suggestion[]> {
+    async getAllSuggestions() {
         return await this.suggestionsService.getAllSuggestions()
     }
 
@@ -19,4 +18,10 @@ export class SuggestionsController {
     async addSuggestion(@Body() newSuggestion: CreateSuggestionDTO) {
         return await this.suggestionsService.createSuggestion(newSuggestion)
     }
+
+    @Put('/approve/:id/user/:userId')
+    async addApprove(@Param('id', ParseIntPipe) id: number, @Param('userId', ParseIntPipe) userId: number) {
+        return await this.suggestionsService.addApprove(id, userId)
+    }
+
 }

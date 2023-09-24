@@ -61,10 +61,15 @@ export class EpisodesService {
         if (!episode.like_users_id) {
             episode.like_users_id = [];
         }
+
         if (episode.like_users_id.includes(user_id)) {
             episode.likes--
             episode.like_users_id = episode.like_users_id.filter(id => id !== user_id)
             return this.episodes.save(episode);
+        }
+        if (episode.dislike_users_id?.includes(user_id)) {
+            episode.dislikes--
+            episode.dislike_users_id = episode.dislike_users_id.filter(id => id !== user_id)
         }
         episode.likes++;
         episode.like_users_id.push(user_id)
@@ -83,6 +88,10 @@ export class EpisodesService {
             episode.dislikes--
             episode.dislike_users_id = episode.dislike_users_id.filter(id => id !== user_id)
             return this.episodes.save(episode);
+        }
+        if (episode.like_users_id?.includes(user_id)) {
+            episode.likes--
+            episode.like_users_id = episode.like_users_id.filter(id => id !== user_id)
         }
         episode.dislikes++;
         episode.dislike_users_id.push(user_id)

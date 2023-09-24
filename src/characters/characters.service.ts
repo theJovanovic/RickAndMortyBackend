@@ -5,7 +5,7 @@ import { Character } from 'src/db_models/Character';
 import { ApiResponse } from 'src/models/api_response';
 import axios, { AxiosResponse } from 'axios';
 import { Episode } from 'src/db_models/Episode';
-import { CharacterFilter } from 'src/models/character.filter.dto';
+import { CharacterFilter } from 'src/models/filter-character.dto';
 
 @Injectable()
 export class CharactersService {

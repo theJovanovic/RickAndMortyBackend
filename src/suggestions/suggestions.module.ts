@@ -5,9 +5,11 @@ import { TypeOrmModule } from "@nestjs/typeorm";
 import { Suggestion } from "src/db_models/Suggestion";
 import { SuggestionsController } from "./suggestions.controller";
 import { SuggestionsService } from "./suggestions.service";
+import { UsersModule } from 'src/users/users.module';
 
 @Module({
     imports: [
+        UsersModule,
         TypeOrmModule.forFeature([Suggestion]),
         PassportModule.register({ defaultStrategy: 'jwt' }),
         JwtModule.register({
