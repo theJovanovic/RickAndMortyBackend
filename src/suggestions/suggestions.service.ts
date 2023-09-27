@@ -17,6 +17,7 @@ export class SuggestionsService {
 
     public async createSuggestion(newSuggestion: CreateSuggestionDTO) {
         const suggestion = this.suggestions.create(newSuggestion)
+        suggestion.approve_users_id = []
         await this.suggestions.save(suggestion)
         const newSuggestions = await this.getAllSuggestions()
         return newSuggestions
@@ -37,7 +38,8 @@ export class SuggestionsService {
             suggestion.approvals -= 1
             suggestion.approve_users_id = suggestion.approve_users_id.filter(id => id !== userId)
             await this.suggestions.update(suggestion.id, suggestion)
-            return await this.transformSuggestions(await this.suggestions.find())
+            const allSuggestions = await this.suggestions.find()
+            return await this.transformSuggestions(allSuggestions)
         }
         suggestion.approvals += 1
         suggestion.approve_users_id.push(userId)

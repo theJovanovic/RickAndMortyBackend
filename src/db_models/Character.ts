@@ -2,9 +2,13 @@ import {
   Entity,
   PrimaryGeneratedColumn,
   Column,
-  CreateDateColumn,
-  UpdateDateColumn,
+  CreateDateColumn
 } from 'typeorm';
+
+interface location_data {
+  url: string,
+  name: string
+}
 
 @Entity('characters')
 export class Character {
@@ -30,10 +34,10 @@ export class Character {
   image: string;
 
   @Column({ type: 'jsonb', nullable: true })
-  origin: any;
+  origin: location_data;
 
   @Column({ type: 'jsonb', nullable: true })
-  location: any;
+  location: location_data;
 
   @Column('text', { array: true })
   episode: string[];

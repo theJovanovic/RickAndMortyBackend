@@ -3,12 +3,14 @@ import { LocationsService } from './locations.service';
 import axios, { AxiosResponse } from 'axios';
 import { Location } from 'src/db_models/Location';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
+import { EpisodesService } from 'src/episodes/episodes.service';
+import { CharactersService } from 'src/characters/characters.service';
 
 @Controller('location')
 export class LocationsController {
 
     constructor(
-        private readonly locationsService: LocationsService,
+        private readonly locationsService: LocationsService
     ) { }
 
     // @Get('/fetchAndSave')
@@ -22,7 +24,23 @@ export class LocationsController {
     //     await this.locationsService.updateEpisodeUrls();
     //     return 'Data updated successfully';
     // }
-    
+
+    // @UseGuards(JwtAuthGuard)
+    @Get('/charts')
+    async getCharts() {
+        const charactersChart = await this.locationsService.getCharactersChart()
+        const episodesChart = await this.locationsService.getEpisodesChart()
+        const pieChart = await this.locationsService.getPieChart()
+        return { charactersChart: charactersChart, episodesChart: episodesChart, pieChart: pieChart }
+    }
+
+    // @UseGuards(JwtAuthGuard)
+    @Get('/:id/chart')
+    async getLocationPiechart(@Param('id', ParseIntPipe) id: number) {
+        const locationPieChart = await this.locationsService.getLocationPieChart(id)
+        return { locationPieChart: locationPieChart }
+    }
+
     // @UseGuards(JwtAuthGuard)
     @Get('/:ids')
     async getByIds(@Param('ids') ids: string): Promise<Location[]> {
