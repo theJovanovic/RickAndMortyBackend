@@ -259,7 +259,7 @@ export class LocationsService {
             throw new Error('Location not found');
         }
 
-        const residentUrls = location.residents; // Assuming this is an array of URLs
+        const residentUrls = location.residents;
         const episodeCount = {};
 
         for (const url of residentUrls) {
