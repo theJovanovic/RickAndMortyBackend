@@ -19,7 +19,7 @@ export class EpisodesService {
             skip: (page - 1) * limit,
             take: limit,
             order: {
-                id: 'ASC' // Change 'episodeNumber' to the actual column name you want to sort by
+                id: 'ASC'
             }
         });
 
@@ -58,10 +58,6 @@ export class EpisodesService {
         if (!episode) {
             throw new Error('Episode not found');
         }
-        if (!episode.like_users_id) {
-            episode.like_users_id = [];
-        }
-
         if (episode.like_users_id.includes(user_id)) {
             episode.likes--
             episode.like_users_id = episode.like_users_id.filter(id => id !== user_id)
@@ -80,9 +76,6 @@ export class EpisodesService {
         const episode = await this.episodes.findOne({ where: { id: id } });
         if (!episode) {
             throw new Error('Episode not found');
-        }
-        if (!episode.dislike_users_id) {
-            episode.dislike_users_id = [];
         }
         if (episode.dislike_users_id.includes(user_id)) {
             episode.dislikes--

@@ -35,10 +35,11 @@ export class LocationsController {
     }
 
     // @UseGuards(JwtAuthGuard)
-    @Get('/:id/chart')
+    @Get('/:id/charts')
     async getLocationPiechart(@Param('id', ParseIntPipe) id: number) {
-        const locationPieChart = await this.locationsService.getLocationPieChart(id)
-        return { locationPieChart: locationPieChart }
+        const locationPieChartSpecies = await this.locationsService.getLocationPieChartSpecies(id)
+        const locationPieChartEpisodes = await this.locationsService.getLocationPieChartEpisodes(id)
+        return { locationPieChartSpecies: locationPieChartSpecies, locationPieChartEpisodes: locationPieChartEpisodes }
     }
 
     // @UseGuards(JwtAuthGuard)

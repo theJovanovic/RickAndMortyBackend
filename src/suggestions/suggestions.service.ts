@@ -1,8 +1,8 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Suggestion } from 'src/db_models/Suggestion';
-import { CreateSuggestionDTO } from 'src/models/create-suggestion.dto';
-import { SentSuggestion } from 'src/models/suggestion-sent.dto';
+import { CreateSuggestionDTO } from 'src/dto/create-suggestion.dto';
+import { SentSuggestion } from 'src/dto/suggestion-sent.dto';
 import { UsersService } from 'src/users/users.service';
 import { Repository } from 'typeorm';
 

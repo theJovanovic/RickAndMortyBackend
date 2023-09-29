@@ -4,8 +4,8 @@ import axios from 'axios';
 import { Character } from 'src/db_models/Character';
 import { Episode } from 'src/db_models/Episode';
 import { Location } from 'src/db_models/Location';
-import { BarChart, Series } from 'src/models/bar-chart';
-import { Data, PieChart, Series as PieSeries } from 'src/models/pie-chart';
+import { BarChart, Series } from 'src/dto/bar-chart.dto';
+import { Data, PieChart, Series as PieSeries } from 'src/dto/pie-chart.dto';
 import { Repository } from 'typeorm';
 
 @Injectable()
@@ -207,7 +207,7 @@ export class LocationsService {
         return pieChart;
     }
 
-    public async getLocationPieChart(id: number) {
+    public async getLocationPieChartSpecies(id: number) {
         const location = await this.locations.findOne({ where: { id: id } });
 
         if (!location) {
@@ -244,6 +244,59 @@ export class LocationsService {
             series: [
                 {
                     name: 'Species',
+                    data: seriesData,
+                },
+            ],
+        };
+
+        return pieChart;
+    }
+
+    public async getLocationPieChartEpisodes(id: number) {
+        const location = await this.locations.findOne({ where: { id: id } });
+
+        if (!location) {
+            throw new Error('Location not found');
+        }
+
+        const residentUrls = location.residents; // Assuming this is an array of URLs
+        const episodeCount = {};
+
+        for (const url of residentUrls) {
+            const urlParts = url.split('/');
+            const characterId = urlParts[urlParts.length - 1];
+            const character = await this.characters.findOne({ where: { id: parseInt(characterId) } });
+
+            if (character) {
+                for (const episodeUrl of character.episode) {
+                    const episodeUrlParts = episodeUrl.split('/');
+                    const episodeId = episodeUrlParts[episodeUrlParts.length - 1];
+                    const episode = await this.episodes.findOne({ where: { id: parseInt(episodeId) } });
+
+                    if (episode) {
+                        const episodeName = episode.name;
+                        episodeCount[episodeName] = (episodeCount[episodeName] || 0) + 1;
+                    }
+                }
+            }
+        }
+
+        const seriesData = [];
+
+        for (const [episodeName, count] of Object.entries(episodeCount)) {
+            seriesData.push({ name: episodeName, y: count });
+        }
+
+        const pieChart = {
+            chart: {
+                type: 'pie',
+            },
+            title: {
+                text: `Episode distribution for location ${location.name}`,
+            },
+            series: [
+                {
+                    name: 'Episodes',
                     data: seriesData,
                 },
             ],

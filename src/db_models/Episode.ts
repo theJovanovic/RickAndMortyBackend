@@ -31,12 +31,12 @@ export class Episode {
   @Column({ default: 0 })
   likes: number;
 
-  @Column('int', { array: true, nullable: true })
+  @Column('int', { array: true, default: {} })
   like_users_id: number[]
 
   @Column({ default: 0 })
   dislikes: number;
   
-  @Column('int', { array: true, nullable: true })
+  @Column('int', { array: true, default: {} })
   dislike_users_id: number[]
 }

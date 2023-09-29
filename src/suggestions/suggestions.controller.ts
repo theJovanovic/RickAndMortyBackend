@@ -1,6 +1,6 @@
 import { Controller, Param, Post, Body, Get, Put, ParseIntPipe } from '@nestjs/common';
 import { SuggestionsService } from './suggestions.service';
-import { CreateSuggestionDTO } from 'src/models/create-suggestion.dto';
+import { CreateSuggestionDTO } from 'src/dto/create-suggestion.dto';
 
 @Controller('suggestion')
 export class SuggestionsController {

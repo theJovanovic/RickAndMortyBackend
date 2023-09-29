@@ -1,6 +1,6 @@
 import { Controller, Get, Post, Body, Param, ParseIntPipe, Query, UseGuards, Put } from '@nestjs/common';
 import { EpisodesService } from './episodes.service';
-import { ApiResponse } from 'src/models/api_response';
+import { ApiResponse } from 'src/dto/api_response.dto';
 import { Episode } from 'src/db_models/Episode';
 import axios, { AxiosResponse } from 'axios';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';

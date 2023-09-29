@@ -2,10 +2,10 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { Like, Repository, getRepository } from "typeorm"
 import { InjectRepository } from "@nestjs/typeorm"
 import { Character } from 'src/db_models/Character';
-import { ApiResponse } from 'src/models/api_response';
+import { ApiResponse } from 'src/dto/api_response.dto';
 import axios, { AxiosResponse } from 'axios';
 import { Episode } from 'src/db_models/Episode';
-import { CharacterFilter } from 'src/models/filter-character.dto';
+import { CharacterFilter } from 'src/dto/filter-character.dto';
 
 @Injectable()
 export class CharactersService {
