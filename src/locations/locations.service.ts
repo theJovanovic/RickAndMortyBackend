@@ -1,11 +1,11 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm'
 import axios from 'axios';
-import { Character } from 'src/db_models/Character';
-import { Episode } from 'src/db_models/Episode';
+import { CharactersService } from 'src/characters/characters.service';
 import { Location } from 'src/db_models/Location';
 import { BarChart, Series } from 'src/dto/bar-chart.dto';
 import { Data, PieChart, Series as PieSeries } from 'src/dto/pie-chart.dto';
+import { EpisodesService } from 'src/episodes/episodes.service';
 import { Repository } from 'typeorm';
 
 @Injectable()
@@ -14,10 +14,8 @@ export class LocationsService {
     constructor(
         @InjectRepository(Location)
         private readonly locations: Repository<Location>,
-        @InjectRepository(Character)
-        private readonly characters: Repository<Character>,
-        @InjectRepository(Episode)
-        private readonly episodes: Repository<Episode>,
+        private readonly characterService: CharactersService,
+        private readonly episodeService: EpisodesService
     ) { }
 
     public async getAll(page: number = 1, limit: number = 20) {
@@ -67,13 +65,7 @@ export class LocationsService {
     }
 
     public async getCharactersChart() {
-        const queryResult = await this.characters
-            .createQueryBuilder("character")
-            .select("character.location ->> 'name' as location_name, COUNT(*) as character_count")
-            .groupBy("character.location ->> 'name'")
-            .orderBy("character_count", "DESC")
-            .limit(10)
-            .getRawMany();
+        const queryResult = await this.characterService.getTopLocationsByCharacterCount();
 
         const categories = queryResult.map(record => record.location_name);
         const data = queryResult.map(record => +record.character_count);
@@ -110,16 +102,14 @@ export class LocationsService {
         return chart;
     }
     public async getEpisodesChart() {
-        const allEpisodes = await this.episodes.find();
+        const allEpisodes = await this.episodeService.getAllEpisodes()
 
         const locationEpisodeCount = new Map<string, number>();
 
         for (const episode of allEpisodes) {
             const characterURLs = episode.characters;
 
-            const episodeCharacters = await this.characters.find({
-                where: characterURLs.map(url => ({ url: url })),
-            });
+            const episodeCharacters = await this.characterService.getEpisodeCharacters(characterURLs)
 
             const episodeLocations = new Set(
                 episodeCharacters.map(character => character.location.name)
@@ -220,7 +210,7 @@ export class LocationsService {
         for (const url of residentUrls) {
             const urlParts = url.split('/');
             const characterId = urlParts[urlParts.length - 1];
-            const character = await this.characters.findOne({ where: { id: parseInt(characterId) } });
+            const character = await this.characterService.getById(parseInt(characterId))
 
             if (character) {
                 const species = character.species;
@@ -265,13 +255,13 @@ export class LocationsService {
         for (const url of residentUrls) {
             const urlParts = url.split('/');
             const characterId = urlParts[urlParts.length - 1];
-            const character = await this.characters.findOne({ where: { id: parseInt(characterId) } });
+            const character = await this.characterService.getById(parseInt(characterId))
 
             if (character) {
                 for (const episodeUrl of character.episode) {
                     const episodeUrlParts = episodeUrl.split('/');
                     const episodeId = episodeUrlParts[episodeUrlParts.length - 1];
-                    const episode = await this.episodes.findOne({ where: { id: parseInt(episodeId) } });
+                    const episode = await this.episodeService.getById(parseInt(episodeId))
 
                     if (episode) {
                         const episodeName = episode.name;

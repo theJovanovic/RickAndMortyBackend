@@ -12,10 +12,6 @@ export class CharactersService {
     constructor(
         @InjectRepository(Character)
         private readonly characters: Repository<Character>,
-        @InjectRepository(Episode)
-        private readonly episodes: Repository<Episode>,
-        @InjectRepository(Location)
-        private readonly locations: Repository<Location>,
     ) { }
 
     public async getAll(page: number = 1, filters: CharacterFilter, limit: number = 15) {
@@ -101,6 +97,21 @@ export class CharactersService {
         return this.getAll(1, {})
     }
 
+    public async getTopLocationsByCharacterCount() {
+        return await this.characters
+            .createQueryBuilder("character")
+            .select("character.location ->> 'name' as location_name, COUNT(*) as character_count")
+            .groupBy("character.location ->> 'name'")
+            .orderBy("character_count", "DESC")
+            .limit(10)
+            .getRawMany();
+    }
+
+    public async getEpisodeCharacters(characterURLs: string[]) {
+        return await this.characters.find({
+            where: characterURLs.map(url => ({ url: url })),
+        });
+    }
 
     // public async fetchAndSaveCharacters() {
     //     for (let index = 1; index <= 42; index++) {

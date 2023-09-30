@@ -12,6 +12,10 @@ export class EpisodesService {
         private readonly episodes: Repository<Episode>,
     ) { }
 
+    public async getAllEpisodes() {
+        return await this.episodes.find()
+    }
+
     public async getAll(page: number = 1, limit: number = 20) {
         page = Number(page);
 
