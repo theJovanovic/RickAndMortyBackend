@@ -1,10 +1,13 @@
-import { Controller, Get, Param, Query, ParseIntPipe, UseGuards } from '@nestjs/common';
+import { Controller, Get, Param, Query, ParseIntPipe, UseGuards, Delete } from '@nestjs/common';
 import { LocationsService } from './locations.service';
 import axios, { AxiosResponse } from 'axios';
 import { Location } from 'src/db_models/Location';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 import { EpisodesService } from 'src/episodes/episodes.service';
 import { CharactersService } from 'src/characters/characters.service';
+import { RoleGuard } from 'src/auth/role.guard';
+import { Roles } from 'src/auth/roles.decorator';
+import { UserRole } from 'src/db_models/User';
 
 @Controller('location')
 export class LocationsController {
@@ -32,6 +35,13 @@ export class LocationsController {
         const episodesChart = await this.locationsService.getEpisodesChart()
         const pieChart = await this.locationsService.getPieChart()
         return { charactersChart: charactersChart, episodesChart: episodesChart, pieChart: pieChart }
+    }
+
+    @UseGuards(JwtAuthGuard, RoleGuard)
+    @Roles(UserRole.ADMIN)
+    @Delete('/admin/:id')
+    public async deleteLocation(@Param('id', ParseIntPipe) id: number) {
+        return this.locationsService.deleteLocation(id)
     }
 
     // @UseGuards(JwtAuthGuard)

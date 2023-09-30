@@ -91,6 +91,17 @@ export class EpisodesService {
         return this.episodes.save(episode);
     }
 
+    public async deleteEpisode(id: number) {
+        const episode = await this.episodes.findOne({ where: { id: id } });
+        if (!episode) {
+            throw new NotFoundException(`Episode with id ${id} not found`);
+        }
+
+        await this.episodes.delete(id)
+
+        return this.getAll(1)
+    }
+
     // public async fetchAndSaveCharacters() {
     //     for (let index = 1; index <= 3; index++) {
     //         const response = await axios.get(`https://rickandmortyapi.com/api/episode?page=${index}`);

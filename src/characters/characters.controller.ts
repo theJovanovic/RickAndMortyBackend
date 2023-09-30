@@ -5,6 +5,9 @@ import { Character } from 'src/db_models/Character';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 import { CharacterFilter } from 'src/dto/filter-character.dto';
 import { log } from 'console';
+import { RoleGuard } from 'src/auth/role.guard';
+import { Roles } from 'src/auth/roles.decorator';
+import { UserRole } from 'src/db_models/User';
 
 @Controller('character')
 export class CharactersController {
@@ -44,8 +47,9 @@ export class CharactersController {
         return await this.charactersService.getById(id);
     }
 
-    // @UseGuards(JwtAuthGuard)
-    @Delete('/:id')
+    @UseGuards(JwtAuthGuard, RoleGuard)
+    @Roles(UserRole.ADMIN)
+    @Delete('/admin/:id')
     public async deleteCharacter(@Param('id', ParseIntPipe) id: number) {
         return this.charactersService.deleteCharacter(id)
     }

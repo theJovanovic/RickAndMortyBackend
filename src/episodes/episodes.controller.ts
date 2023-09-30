@@ -1,9 +1,12 @@
-import { Controller, Get, Post, Body, Param, ParseIntPipe, Query, UseGuards, Put } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, ParseIntPipe, Query, UseGuards, Put, Delete } from '@nestjs/common';
 import { EpisodesService } from './episodes.service';
 import { ApiResponse } from 'src/dto/api_response.dto';
 import { Episode } from 'src/db_models/Episode';
 import axios, { AxiosResponse } from 'axios';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
+import { RoleGuard } from 'src/auth/role.guard';
+import { UserRole } from 'src/db_models/User';
+import { Roles } from 'src/auth/roles.decorator';
 
 @Controller('episode')
 export class EpisodesController {
@@ -32,6 +35,13 @@ export class EpisodesController {
     @Put('/like/:id/user/:user_id')
     async likeEpisode(@Param('id', ParseIntPipe) id: number, @Param('user_id', ParseIntPipe) user_id: number) {
         return await this.episodesService.incrementLikes(id, user_id);
+    }
+
+    @UseGuards(JwtAuthGuard, RoleGuard)
+    @Roles(UserRole.ADMIN)
+    @Delete('/admin/:id')
+    public async deleteEpisode(@Param('id', ParseIntPipe) id: number) {
+        return this.episodesService.deleteEpisode(id)
     }
 
     // @UseGuards(JwtAuthGuard)

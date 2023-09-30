@@ -6,6 +6,11 @@ import {
 } from 'typeorm';
 import * as bcrypt from "bcrypt"
 
+export enum UserRole {
+  USER = 'user',
+  ADMIN = 'admin',
+}
+
 @Entity('user')
 @Unique(['email'])
 export class User {
@@ -26,6 +31,13 @@ export class User {
 
   @Column({ type: 'boolean', default: false })
   isActive: boolean;
+
+  @Column({
+    type: 'enum',
+    enum: UserRole,
+    default: UserRole.USER,
+  })
+  role: UserRole;
 
   async validatePassword(password: string): Promise<boolean> {
     return bcrypt.compare(password, this.password);

@@ -2,8 +2,7 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { Like, Repository, getRepository } from "typeorm"
 import { InjectRepository } from "@nestjs/typeorm"
 import { Character } from 'src/db_models/Character';
-import { ApiResponse } from 'src/dto/api_response.dto';
-import axios, { AxiosResponse } from 'axios';
+import { Location } from 'src/db_models/Location';
 import { Episode } from 'src/db_models/Episode';
 import { CharacterFilter } from 'src/dto/filter-character.dto';
 
@@ -13,6 +12,10 @@ export class CharactersService {
     constructor(
         @InjectRepository(Character)
         private readonly characters: Repository<Character>,
+        @InjectRepository(Episode)
+        private readonly episodes: Repository<Episode>,
+        @InjectRepository(Location)
+        private readonly locations: Repository<Location>,
     ) { }
 
     public async getAll(page: number = 1, filters: CharacterFilter, limit: number = 15) {
@@ -88,8 +91,16 @@ export class CharactersService {
     }
 
     public async deleteCharacter(id: number) {
-        return await this.characters.delete(id)
+        const character = await this.characters.findOne({ where: { id: id } });
+        if (!character) {
+            throw new NotFoundException(`Character with id ${id} not found`);
+        }
+
+        await this.characters.delete(id)
+
+        return this.getAll(1, {})
     }
+
 
     // public async fetchAndSaveCharacters() {
     //     for (let index = 1; index <= 42; index++) {

@@ -292,17 +292,28 @@ export class LocationsService {
                 type: 'pie',
             },
             title: {
-                text: `Episode distribution for location ${location.name}`,
+                text: `Character per episode distribution for location ${location.name}`,
             },
             series: [
                 {
-                    name: 'Episodes',
+                    name: 'Characters',
                     data: seriesData,
                 },
             ],
         };
 
         return pieChart;
+    }
+
+    public async deleteLocation(id: number) {
+        const location = await this.locations.findOne({ where: { id: id } });
+        if (!location) {
+            throw new NotFoundException(`Location with id ${id} not found`);
+        }
+
+        await this.locations.delete(id)
+
+        return this.getAll(1)
     }
 
     // public async updateEpisodeUrls(): Promise<void> {

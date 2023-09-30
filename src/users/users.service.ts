@@ -3,9 +3,10 @@ import { CreateUserDTO } from 'src/dto/create-user.dto';
 import { NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm'
 import { Repository } from 'typeorm';
-import { User } from 'src/db_models/User';
+import { User, UserRole } from 'src/db_models/User';
 import * as bcrypt from "bcrypt"
 import { JwtService } from '@nestjs/jwt';
+import { UserDataDTO } from 'src/dto/userdata.dto';
 
 @Injectable()
 export class UsersService {
@@ -45,7 +46,26 @@ export class UsersService {
     }
 
     async getUsers() {
-        return this.users.find()
+        const users = await this.users.find()
+        users.map(user => {
+            delete user.password
+            return user
+        })
+        return users as UserDataDTO[]
+    }
+
+    async modifyUser(modifiedUser: UserDataDTO) {
+        const user = await this.users.findOne({ where: { id: modifiedUser.id } });
+        if (!user) {
+            throw new NotFoundException(`Location with id ${modifiedUser.id} not found`);
+        }
+        const dbModifiedUser = await this.users.update(modifiedUser.id, modifiedUser as User)
+        const users = await this.users.find()
+        users.map(user => {
+            delete user.password
+            return user
+        })
+        return users as UserDataDTO[]
     }
 
     async findOne(id: number): Promise<User> {
@@ -73,6 +93,20 @@ export class UsersService {
     async userCount() {
         const users = await this.users.find();
         return users.length
+    }
+
+
+    async updateRole(userId: number): Promise<User> {
+        const user = await this.users.findOne({ where: { id: userId } });
+
+        if (!user) {
+            throw new NotFoundException(`User with ID ${userId} not found`);
+        }
+
+        user.role = UserRole.ADMIN;
+        await this.users.save(user);
+
+        return user;
     }
 
 }
