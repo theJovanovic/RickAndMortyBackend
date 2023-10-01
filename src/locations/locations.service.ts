@@ -286,7 +286,7 @@ export class LocationsService {
             },
             series: [
                 {
-                    name: 'Characters',
+                    name: 'Characters from this location',
                     data: seriesData,
                 },
             ],

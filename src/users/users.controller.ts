@@ -35,6 +35,7 @@ export class UsersController {
         return this.usersService.createUser(createUserDTO)
     }
 
+    @UseGuards(JwtAuthGuard)
     @Get('/:id')
     async getUserById(@Param('id', ParseIntPipe) id: number) {
         return this.usersService.getUserById(id)
@@ -46,6 +47,7 @@ export class UsersController {
         this.usersService.logout(id)
     }
 
+    @UseGuards(JwtAuthGuard)
     @Get('/updateRole/:id')
     async updateRole(@Param('id', ParseIntPipe) id: number) {
         return await this.usersService.updateRole(id)
