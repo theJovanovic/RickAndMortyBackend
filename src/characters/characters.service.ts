@@ -82,6 +82,16 @@ export class CharactersService {
     }
 
     public async addCharacter(character: Character) {
+        const allCharacters = await this.characters.find();
+        const sortedCharacters = allCharacters.sort((a, b) => {
+            const idA = parseInt(a.url.split('/').pop() || '0', 10);
+            const idB = parseInt(b.url.split('/').pop() || '0', 10);
+            return idB - idA;
+        });
+        const lastCharacter = sortedCharacters[0];
+        const lastId = lastCharacter ? parseInt(lastCharacter.url.split('/').pop() || '0', 10) : 0;
+
+        character.url = `${character.url}${lastId + 1}`
         const newCharacter = this.characters.create(character)
         return await this.characters.save(newCharacter)
     }

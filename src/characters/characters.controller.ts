@@ -1,10 +1,8 @@
 import { Controller, Get, Param, ParseIntPipe, Query, Post, Delete, Body, UseGuards } from '@nestjs/common';
 import { CharactersService } from './characters.service';
-import axios, { AxiosResponse } from 'axios';
 import { Character } from 'src/db_models/Character';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
 import { CharacterFilter } from 'src/dto/filter-character.dto';
-import { log } from 'console';
 import { RoleGuard } from 'src/auth/role.guard';
 import { Roles } from 'src/auth/roles.decorator';
 import { UserRole } from 'src/db_models/User';
@@ -28,8 +26,9 @@ export class CharactersController {
     //     return 'Data updated successfully';
     // }
 
-    @UseGuards(JwtAuthGuard)
-    @Post('add')
+    @UseGuards(JwtAuthGuard, RoleGuard)
+    @Roles(UserRole.ADMIN)
+    @Post('/admin/create')
     public async addCharacter(@Body() character: Character) {
         return this.charactersService.addCharacter(character)
     }

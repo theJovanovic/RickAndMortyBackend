@@ -1,10 +1,7 @@
 import { Controller, Get, Param, Query, ParseIntPipe, UseGuards, Delete } from '@nestjs/common';
 import { LocationsService } from './locations.service';
-import axios, { AxiosResponse } from 'axios';
 import { Location } from 'src/db_models/Location';
 import { JwtAuthGuard } from 'src/auth/jwt-auth.guard';
-import { EpisodesService } from 'src/episodes/episodes.service';
-import { CharactersService } from 'src/characters/characters.service';
 import { RoleGuard } from 'src/auth/role.guard';
 import { Roles } from 'src/auth/roles.decorator';
 import { UserRole } from 'src/db_models/User';
@@ -33,7 +30,7 @@ export class LocationsController {
     async getCharts() {
         const charactersChart = await this.locationsService.getCharactersChart()
         const episodesChart = await this.locationsService.getEpisodesChart()
-        const pieChart = await this.locationsService.getPieChart()
+        const pieChart = await this.locationsService.getLocationsPieChart()
         return { charactersChart: charactersChart, episodesChart: episodesChart, pieChart: pieChart }
     }
 

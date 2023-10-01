@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, BadRequestException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { UsersService } from '../users/users.service';
 import { LoginUserDTO } from 'src/dto/login-user.dto';
@@ -18,12 +18,12 @@ export class AuthService {
         const user = await this.usersService.findByEmail(email);
 
         if (!user) {
-            return { id: null, firstname: null, lastname: null, email: null, role: null, token: null }
+            throw new BadRequestException(`Invalid email`);
         }
         const passwordIsValid = await user.validatePassword(password);
 
         if (!passwordIsValid) {
-            return { id: null, firstname: null, lastname: null, email: null, role: null, token: null }
+            throw new BadRequestException(`Invalid password`);
         }
 
         const payload = { sub: user.id, email: user.email, role: user.role };

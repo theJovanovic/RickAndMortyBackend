@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { CreateUserDTO } from 'src/dto/create-user.dto';
-import { NotFoundException } from '@nestjs/common';
+import { NotFoundException, BadRequestException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm'
 import { Repository } from 'typeorm';
 import { User, UserRole } from 'src/db_models/User';
@@ -23,6 +23,15 @@ export class UsersService {
 
     async createUser(createUserDTO: CreateUserDTO) {
         const existingUser = await this.users.findOne({ where: { email: createUserDTO.email } });
+        if (createUserDTO.firstname === "") {
+            throw new BadRequestException(`First name empty`);
+        }
+        if (createUserDTO.lastname === "") {
+            throw new BadRequestException(`Last name empty`);
+        }
+        if (createUserDTO.password === "") {
+            throw new BadRequestException(`Password empty`);
+        }
         if (!existingUser) {
             createUserDTO.password = await bcrypt.hash(
                 createUserDTO.password,
@@ -41,17 +50,13 @@ export class UsersService {
             return { id: user.id, firstname: user.firstname, lastname: user.lastname, email: user.email, token: accessToken }
         }
 
-        return { id: null, firstname: null, lastname: null, email: null, token: null }
-
+        throw new BadRequestException(`User with that email already exists`);
     }
 
     async getUsers() {
-        const users = await this.users.find()
-        users.map(user => {
-            delete user.password
-            return user
-        })
-        return users as UserDataDTO[]
+        const sortedUsers = await this.getSortedUsersByRole()
+        const sanitizedUsers = this.sanitizeUsers(sortedUsers)
+        return sanitizedUsers as UserDataDTO[]
     }
 
     async modifyUser(modifiedUser: UserDataDTO) {
@@ -59,13 +64,15 @@ export class UsersService {
         if (!user) {
             throw new NotFoundException(`Location with id ${modifiedUser.id} not found`);
         }
-        const dbModifiedUser = await this.users.update(modifiedUser.id, modifiedUser as User)
-        const users = await this.users.find()
-        users.map(user => {
-            delete user.password
-            return user
-        })
-        return users as UserDataDTO[]
+        await this.users.update(modifiedUser.id, modifiedUser as User)
+        const sortedUsers = await this.getSortedUsersByRole()
+        const sanitizedUsers = this.sanitizeUsers(sortedUsers)
+        return sanitizedUsers as UserDataDTO[]
+    }
+
+    async deleteUser(id: number) {
+        await this.users.delete(id)
+        return await this.getUsers()
     }
 
     async findOne(id: number): Promise<User> {
@@ -95,7 +102,6 @@ export class UsersService {
         return users.length
     }
 
-
     async updateRole(userId: number): Promise<User> {
         const user = await this.users.findOne({ where: { id: userId } });
 
@@ -107,6 +113,22 @@ export class UsersService {
         await this.users.save(user);
 
         return user;
+    }
+
+    private sanitizeUsers(users: User[]) {
+        return users.map(user => {
+            const { password, ...rest } = user
+            return rest
+        })
+    }
+    private async getSortedUsersByRole() {
+        const users = await this.users.find()
+        const sortedUsers = users.sort((a, b) => {
+            if (a.role < b.role) return -1;
+            if (a.role > b.role) return 1;
+            return 0;
+        });
+        return sortedUsers
     }
 
 }

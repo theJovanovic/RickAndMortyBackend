@@ -161,7 +161,7 @@ export class LocationsService {
 
         return chart;
     }
-    public async getPieChart() {
+    public async getLocationsPieChart() {
         const allLocations = await this.locations.find();
 
         const locationTypeCount = new Map<string, number>();
@@ -210,11 +210,15 @@ export class LocationsService {
         for (const url of residentUrls) {
             const urlParts = url.split('/');
             const characterId = urlParts[urlParts.length - 1];
-            const character = await this.characterService.getById(parseInt(characterId))
+            try {
+                const character = await this.characterService.getById(parseInt(characterId));
 
-            if (character) {
-                const species = character.species;
-                speciesCount[species] = (speciesCount[species] || 0) + 1;
+                if (character) {
+                    const species = character.species;
+                    speciesCount[species] = (speciesCount[species] || 0) + 1;
+                }
+            } catch (error) {
+                console.log(`Failed to get character by ID ${characterId}:`, error);
             }
         }
 
@@ -255,20 +259,25 @@ export class LocationsService {
         for (const url of residentUrls) {
             const urlParts = url.split('/');
             const characterId = urlParts[urlParts.length - 1];
-            const character = await this.characterService.getById(parseInt(characterId))
 
-            if (character) {
-                for (const episodeUrl of character.episode) {
-                    const episodeUrlParts = episodeUrl.split('/');
-                    const episodeId = episodeUrlParts[episodeUrlParts.length - 1];
-                    const episode = await this.episodeService.getById(parseInt(episodeId))
+            try {
+                const character = await this.characterService.getById(parseInt(characterId))
+                if (character) {
+                    for (const episodeUrl of character.episode) {
+                        const episodeUrlParts = episodeUrl.split('/');
+                        const episodeId = episodeUrlParts[episodeUrlParts.length - 1];
+                        const episode = await this.episodeService.getById(parseInt(episodeId))
 
-                    if (episode) {
-                        const episodeName = episode.name;
-                        episodeCount[episodeName] = (episodeCount[episodeName] || 0) + 1;
+                        if (episode) {
+                            const episodeName = episode.name;
+                            episodeCount[episodeName] = (episodeCount[episodeName] || 0) + 1;
+                        }
                     }
                 }
+            } catch (error) {
+                console.log(`Failed to get character by ID ${characterId}:`, error);
             }
+
         }
 
         const seriesData = [];
